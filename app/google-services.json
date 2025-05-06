@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "896353082017",
+    "project_id": "fir-basico-518de",
+    "storage_bucket": "fir-basico-518de.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:896353082017:android:ebc8dcaf3da8a653a8aee0",
+        "android_client_info": {
+          "package_name": "mx.unam.firebasebasico"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwYD10hj4PaDqOGADD0086oSrQ8oGr66c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
