@@ -2,6 +2,7 @@ package mx.unam.firebasebasico.presentation.signup
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.firebase.auth.FirebaseAuth
@@ -34,9 +36,10 @@ import mx.unam.firebasebasico.ui.theme.SelectedField
 import mx.unam.firebasebasico.ui.theme.UnselectedField
 
 @Composable
-fun SignUpScreen(auth: FirebaseAuth) {
+fun SignUpScreen(auth: FirebaseAuth, navigateToInitial:() -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var signUpError by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -53,7 +56,7 @@ fun SignUpScreen(auth: FirebaseAuth) {
                 tint = Color.White,
                 modifier = Modifier
                     .padding(vertical = 40.dp, horizontal = 1.dp)
-                    .size(32.dp)
+                    .size(32.dp).clickable { navigateToInitial() }
             )
             Spacer(modifier = Modifier.weight(1f))
         }
@@ -75,17 +78,33 @@ fun SignUpScreen(auth: FirebaseAuth) {
             modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.colors(
                 unfocusedContainerColor = UnselectedField,
-                focusedContainerColor = SelectedField
-            )
+                focusedContainerColor = SelectedField),
+            visualTransformation =  PasswordVisualTransformation(),
         )
+
+        Spacer(Modifier.height(48.dp))
+
+
+        if (signUpError){
+            Text(
+                text = "Debe colocar un correo y contraseña válidos",
+                color = Color.Red,
+                fontSize = 18.sp
+            )
+        }
+
         Spacer(Modifier.height(48.dp))
         Button(onClick = {
             auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                 if(task.isSuccessful){
                     //Registrado
+                    signUpError = false
+
                     Log.i("aris", "Registro OK")
                 }else{
                     //Error
+                    signUpError = true
+
                     Log.i("aris", "Registro KO")
                 }
             }

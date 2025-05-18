@@ -1,5 +1,7 @@
 package mx.unam.firebasebasico.presentation.initial
 
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -23,6 +25,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -39,6 +42,13 @@ import mx.unam.firebasebasico.ui.theme.ShapeButton
 @Preview
 @Composable
 fun InitialScreen(navigateToLogin: () -> Unit = {}, navigateToSignUp: () -> Unit = {}) {
+
+    val context = LocalContext.current
+
+    BackHandler(enabled = true) {
+        (context as Activity).finishAffinity()
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()

@@ -1,9 +1,11 @@
 package mx.unam.firebasebasico.presentation.home
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -64,6 +66,12 @@ fun HomeScreen(viewmodel: HomeViewmodel = viewModel()) {
     val player by viewmodel.player.collectAsState()
     val blockVersion by viewmodel.blockVersion.collectAsState()
 
+    val context = LocalContext.current
+
+    BackHandler(enabled = true) {
+        (context as Activity).finishAffinity()
+    }
+
     if (blockVersion) {
         val context = LocalContext.current
         Dialog(
@@ -112,7 +120,7 @@ fun HomeScreen(viewmodel: HomeViewmodel = viewModel()) {
             color = Color.White,
             fontWeight = FontWeight.Bold,
             fontSize = 30.sp,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(vertical = 30.dp, horizontal = 10.dp)
         )
 
         LazyRow {

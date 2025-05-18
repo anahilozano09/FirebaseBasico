@@ -2,6 +2,7 @@ package mx.unam.firebasebasico.presentation.login
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,6 +26,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,11 +36,13 @@ import mx.unam.firebasebasico.R
 import mx.unam.firebasebasico.ui.theme.Black
 import mx.unam.firebasebasico.ui.theme.SelectedField
 import mx.unam.firebasebasico.ui.theme.UnselectedField
+import kotlin.math.log
 
 @Composable
-fun LoginScreen(auth: FirebaseAuth, navigateToHome:() -> Unit) {
+fun LoginScreen(auth: FirebaseAuth, navigateToHome:() -> Unit, navigateToInitial:() -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var loginError by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -54,7 +59,7 @@ fun LoginScreen(auth: FirebaseAuth, navigateToHome:() -> Unit) {
                 tint = Color.White,
                 modifier = Modifier
                     .padding(vertical = 40.dp, horizontal = 1.dp)
-                    .size(32.dp)
+                    .size(32.dp).clickable { navigateToInitial() }
             )
             Spacer(modifier = Modifier.weight(1f))
         }
@@ -77,16 +82,31 @@ fun LoginScreen(auth: FirebaseAuth, navigateToHome:() -> Unit) {
             colors = TextFieldDefaults.colors(
                 unfocusedContainerColor = UnselectedField,
                 focusedContainerColor = SelectedField
-            )
+            ),
+            visualTransformation =  PasswordVisualTransformation(),
         )
+
         Spacer(Modifier.height(48.dp))
+
+        if (loginError){
+            Text(
+                text = "Correo y/o contraseña inválidos",
+                color = Color.Red,
+                fontSize = 18.sp
+            )
+        }
+
+        Spacer(Modifier.height(48.dp))
+
         Button(onClick = {
             auth.signInWithEmailAndPassword(email, password).addOnCompleteListener{ task ->
                 if(task.isSuccessful){
+                    loginError = false
                     navigateToHome()
                     Log.i("aris", "LOGIN OK")
                 }else{
                     //Error
+                    loginError = true
                     Log.i("aris", "LOGIN KO")
                 }
             }

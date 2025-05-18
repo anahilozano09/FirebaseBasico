@@ -23,10 +23,17 @@ fun NavigationWrapper(
                 navigateToSignUp = { navHostController.navigate("signUp") })
         }
         composable("logIn") {
-            LoginScreen(auth){ navHostController.navigate("home") }
+            LoginScreen(
+                auth,
+                navigateToHome = { navHostController.navigate("home") },
+                navigateToInitial = {navHostController.navigate("initial")}
+            )
         }
         composable("signUp") {
-            SignUpScreen(auth)
+            SignUpScreen(
+                auth,
+                navigateToInitial = {navHostController.navigate("initial")}
+            )
         }
         composable("home"){
             HomeScreen()
