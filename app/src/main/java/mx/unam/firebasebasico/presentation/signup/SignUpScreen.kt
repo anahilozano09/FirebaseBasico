@@ -37,24 +37,31 @@ import mx.unam.firebasebasico.ui.theme.UnselectedField
 fun SignUpScreen(auth: FirebaseAuth) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    Column (modifier = Modifier
-        .fillMaxSize()
-        .background(Black)
-        .padding(horizontal = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally) {
 
-        Row () {
-            Icon(painter = painterResource(id = R.drawable.ic_back_24),
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Black)
+            .padding(horizontal = 32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        Row(){
+            Icon(
+                painter = painterResource(id = R.drawable.ic_back_24),
                 contentDescription = "",
                 tint = Color.White,
-                modifier = Modifier.padding(vertical = 24.dp).size(24.dp))
+                modifier = Modifier
+                    .padding(vertical = 40.dp, horizontal = 1.dp)
+                    .size(32.dp)
+            )
             Spacer(modifier = Modifier.weight(1f))
         }
 
-
         Text("Email", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 40.sp)
-        TextField(value = email,
-            onValueChange = {email = it},
+        TextField(
+            value = email,
+            onValueChange = { email = it },
             modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.colors(
                 unfocusedContainerColor = UnselectedField,
@@ -63,8 +70,8 @@ fun SignUpScreen(auth: FirebaseAuth) {
         )
         Spacer(Modifier.height(48.dp))
         Text("Password", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 40.sp)
-        TextField(value = password,
-            onValueChange = {password = it},
+        TextField(
+            value = password, onValueChange = { password = it },
             modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.colors(
                 unfocusedContainerColor = UnselectedField,
@@ -73,20 +80,17 @@ fun SignUpScreen(auth: FirebaseAuth) {
         )
         Spacer(Modifier.height(48.dp))
         Button(onClick = {
-            
-            auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
-                task ->
-                if (task.isSuccessful){
+            auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
+                if(task.isSuccessful){
                     //Registrado
                     Log.i("aris", "Registro OK")
                 }else{
                     //Error
-                    Log.i("aris","Registro KO")
+                    Log.i("aris", "Registro KO")
                 }
             }
         }) {
             Text(text = "Sign Up")
         }
-
     }
 }

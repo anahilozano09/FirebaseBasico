@@ -9,14 +9,14 @@ plugins {
 
 android {
     namespace = "mx.unam.firebasebasico"
-    compileSdk = 35
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "mx.unam.firebasebasico"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 34
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -48,6 +48,8 @@ dependencies {
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
+    implementation(libs.firebase.realtime)
+    implementation(libs.firebase.config)
 
     implementation(libs.coil)
 
@@ -61,6 +63,9 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+
+    implementation(libs.google.play.services.base)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

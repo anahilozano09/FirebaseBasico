@@ -14,18 +14,18 @@ import mx.unam.firebasebasico.presentation.signup.SignUpScreen
 @Composable
 fun NavigationWrapper(
     navHostController: NavHostController,
-    auth: FirebaseAuth){
-    NavHost(navController = navHostController, startDestination = "initial"){
-        composable("initial"){
-            InitialScreen(
-                navigateToLogin = {navHostController.navigate("logIn")},
-                navigateToSignUp = {navHostController.navigate("signUp")}
-            )
+    auth: FirebaseAuth
+) {
+
+    NavHost(navController = navHostController, startDestination = "initial") {
+        composable("initial") {
+            InitialScreen(navigateToLogin = { navHostController.navigate("logIn") },
+                navigateToSignUp = { navHostController.navigate("signUp") })
         }
-        composable("logIn"){
+        composable("logIn") {
             LoginScreen(auth){ navHostController.navigate("home") }
         }
-        composable("signUp"){
+        composable("signUp") {
             SignUpScreen(auth)
         }
         composable("home"){

@@ -38,53 +38,86 @@ import mx.unam.firebasebasico.ui.theme.ShapeButton
 
 @Preview
 @Composable
-fun InitialScreen(navigateToLogin:() -> Unit = {}, navigateToSignUp:() -> Unit = {}){
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .background(Brush.verticalGradient(listOf(Gray, Black), startY = 0f, endY = 600f)),
-        horizontalAlignment = Alignment.CenterHorizontally) {
-
+fun InitialScreen(navigateToLogin: () -> Unit = {}, navigateToSignUp: () -> Unit = {}) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Brush.verticalGradient(listOf(Gray, Black), startY = 0f, endY = 600f)),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Spacer(modifier = Modifier.weight(1f))
-        Image(painter = painterResource(id = R.drawable.spotify), contentDescription = "",
-            modifier = Modifier.clip(CircleShape))
+        Image(
+            painter = painterResource(id = R.drawable.spotify),
+            contentDescription = "",
+            modifier = Modifier.clip(CircleShape)
+        )
         Spacer(modifier = Modifier.weight(1f))
-        Text("Millions of songs.", color = Color.White, fontSize = 38.sp,
-            fontWeight = FontWeight.Bold)
-        Text("Free on Spotify.", color = Color.White, fontSize = 38.sp,
-            fontWeight = FontWeight.Bold)
+        Text(
+            "Millions of songs.",
+            color = Color.White,
+            fontSize = 38.sp,
+            fontWeight = FontWeight.Bold
+        )
+        Text(
+            "Free on Spotify", color = Color.White, fontSize = 38.sp, fontWeight = FontWeight.Bold
+        )
         Spacer(modifier = Modifier.weight(1f))
-        Button(onClick = { navigateToSignUp() }, modifier = Modifier
-            .fillMaxWidth()
-            .height(48.dp)
-            .padding(horizontal = 32.dp), colors = ButtonDefaults.buttonColors(containerColor = Green)) {
-            Text("Sign up free", color = Black, fontWeight = FontWeight.Bold)
+        Button(
+            onClick = { navigateToSignUp() },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp)
+                .padding(horizontal = 32.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Green)
+        ) {
+            Text(text = "Sign up free", color = Black, fontWeight = FontWeight.Bold)
         }
         Spacer(modifier = Modifier.height(8.dp))
-        CustomButton(Modifier.clickable {  }, painterResource(id = R.drawable.google), "Continue with Google")
+        CustomButton(
+            Modifier.clickable { }, painterResource(id = R.drawable.google), "Continue with Google"
+        )
         Spacer(modifier = Modifier.height(8.dp))
-        CustomButton(Modifier.clickable {  }, painterResource(id = R.drawable.facebook), "Continue with Facebook")
-        Text(text = "Log in", color = Color.White, modifier = Modifier
-            .padding(24.dp).clickable { navigateToLogin() },
-            fontWeight = FontWeight.Bold)
+        CustomButton(
+            Modifier.clickable { },
+            painterResource(id = R.drawable.facebook),
+            "Continue with Facebook"
+        )
+        Text(
+            text = "Log In",
+            color = Color.White,
+            modifier = Modifier
+                .padding(24.dp)
+                .clickable { navigateToLogin() },
+            fontWeight = FontWeight.Bold
+        )
         Spacer(modifier = Modifier.weight(1f))
-
     }
 }
 
 @Composable
-fun CustomButton(modifier: Modifier, painter: Painter, title:String){
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .height(48.dp)
-        .padding(horizontal = 32.dp)
-        .background(BackgroundButton)
-        .border(2.dp, ShapeButton, CircleShape),
-        contentAlignment = Alignment.CenterStart){
-        Image(painter = painter, contentDescription = "",
-            modifier = Modifier.padding(start = 16.dp).size(16.dp))
-        Text(text = title, color = Color.White,
+fun CustomButton(modifier: Modifier, painter: Painter, title: String) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(48.dp)
+            .padding(horizontal = 32.dp)
+            .background(BackgroundButton)
+            .border(2.dp, ShapeButton, CircleShape),
+        contentAlignment = Alignment.CenterStart
+    ) {
+        Image(
+            painter = painter,
+            contentDescription = "",
+            modifier = Modifier
+                .padding(start = 16.dp)
+                .size(16.dp)
+        )
+        Text(
+            text = title,
+            color = Color.White,
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Bold)
+            fontWeight = FontWeight.Bold
+        )
     }
 }

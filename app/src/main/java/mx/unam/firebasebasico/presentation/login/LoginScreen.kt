@@ -38,24 +38,31 @@ import mx.unam.firebasebasico.ui.theme.UnselectedField
 fun LoginScreen(auth: FirebaseAuth, navigateToHome:() -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    Column (modifier = Modifier
-        .fillMaxSize()
-        .background(Black)
-        .padding(horizontal = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally) {
 
-        Row () {
-            Icon(painter = painterResource(id = R.drawable.ic_back_24),
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Black)
+            .padding(horizontal = 32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        Row(){
+            Icon(
+                painter = painterResource(id = R.drawable.ic_back_24),
                 contentDescription = "",
                 tint = Color.White,
-                modifier = Modifier.padding(vertical = 24.dp).size(24.dp))
+                modifier = Modifier
+                    .padding(vertical = 40.dp, horizontal = 1.dp)
+                    .size(32.dp)
+            )
             Spacer(modifier = Modifier.weight(1f))
         }
 
-
         Text("Email", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 40.sp)
-        TextField(value = email,
-            onValueChange = {email = it},
+        TextField(
+            value = email,
+            onValueChange = { email = it },
             modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.colors(
                 unfocusedContainerColor = UnselectedField,
@@ -64,8 +71,8 @@ fun LoginScreen(auth: FirebaseAuth, navigateToHome:() -> Unit) {
         )
         Spacer(Modifier.height(48.dp))
         Text("Password", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 40.sp)
-        TextField(value = password,
-            onValueChange = {password = it},
+        TextField(
+            value = password, onValueChange = { password = it },
             modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.colors(
                 unfocusedContainerColor = UnselectedField,
@@ -74,21 +81,18 @@ fun LoginScreen(auth: FirebaseAuth, navigateToHome:() -> Unit) {
         )
         Spacer(Modifier.height(48.dp))
         Button(onClick = {
-            auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
-                task -> if (task.isSuccessful){
-                    //Navegar
+            auth.signInWithEmailAndPassword(email, password).addOnCompleteListener{ task ->
+                if(task.isSuccessful){
                     navigateToHome()
                     Log.i("aris", "LOGIN OK")
                 }else{
-                    //error
+                    //Error
                     Log.i("aris", "LOGIN KO")
-
                 }
             }
         }) {
             Text(text = "Login")
         }
-
     }
 }
 
