@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
@@ -57,10 +58,49 @@ import mx.unam.firebasebasico.ui.theme.Purple40
 import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 @Composable
-fun HomeScreen(viewmodel: HomeViewmodel = HomeViewmodel()) {
+fun HomeScreen(viewmodel: HomeViewmodel = viewModel()) {
 
     val artists: State<List<Artist>> = viewmodel.artist.collectAsState()
     val player by viewmodel.player.collectAsState()
+    val blockVersion by viewmodel.blockVersion.collectAsState()
+
+    if (blockVersion) {
+        val context = LocalContext.current
+        Dialog(
+            onDismissRequest = { },
+            properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
+        ) {
+            Card(colors = CardDefaults.cardColors(containerColor = Color.White)) {
+                Column(
+                    modifier = Modifier
+                        .padding(24.dp)
+                        .fillMaxWidth()
+                        .height(300.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "ACTUALIZA",
+                        fontSize = 22.sp,
+                        color = Black,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Text(
+                        text = "Para poder disfrutar de todo nuestro contenido actualice la app",
+                        fontSize = 16.sp,
+                        color = Color.Gray,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    Button(onClick = { navigateToPlayStore(context) }) {
+                        Text(text = "¡Actualizar!")
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+            }
+
+        }
+    }
 
     Column(
         Modifier
@@ -72,7 +112,7 @@ fun HomeScreen(viewmodel: HomeViewmodel = HomeViewmodel()) {
             color = Color.White,
             fontWeight = FontWeight.Bold,
             fontSize = 30.sp,
-            modifier = Modifier.padding(24.dp)
+            modifier = Modifier.padding(16.dp)
         )
 
         LazyRow {
@@ -168,3 +208,23 @@ fun ArtistItemPreview() {
 //        }
 //
 //}
+
+fun navigateToPlayStore(context: Context) {
+    val appPackage = context.packageName
+    try {
+        context.startActivity(
+            Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("market://details?id=$appPackage")
+            )
+        )
+    } catch (e: Exception) {
+        context.startActivity(
+            Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("https://play.google.com/store/apps/details?id=$appPackage")
+            )
+        )
+
+    }
+}

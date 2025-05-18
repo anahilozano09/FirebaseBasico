@@ -20,78 +20,86 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import mx.unam.firebasebasico.domain.CanAccessToApp
 import mx.unam.firebasebasico.presentation.model.Artist
 import mx.unam.firebasebasico.presentation.model.Player
 
-class HomeViewmodel:ViewModel() {
+class HomeViewmodel : ViewModel() {
+    private var canAccessToApp: CanAccessToApp = CanAccessToApp()
     private val database = Firebase.database
     private var db: FirebaseFirestore = Firebase.firestore
 
     private val _artist = MutableStateFlow<List<Artist>>(emptyList())
-    val artist:StateFlow<List<Artist>> = _artist
+    val artist: StateFlow<List<Artist>> = _artist
 
     private val _player = MutableStateFlow<Player?>(null)
-    val player:StateFlow<Player?> = _player
+    val player: StateFlow<Player?> = _player
 
     private val _blockVersion = MutableStateFlow<Boolean>(false)
     val blockVersion:StateFlow<Boolean> = _blockVersion
 
     init {
-/*//        getArtists()
-            repeat(20){
-                loadData()
-            }*/
-            getArtists()
-            getPlayer()
+
+//        repeat(20) {
+//            loadData()
+//        }
+        checkUserVersion()
+        getArtists()
+        getPlayer()
     }
 
+    private fun checkUserVersion() {
+        viewModelScope.launch {
+            val result = withContext(Dispatchers.IO){
+                canAccessToApp()
+            }
+            _blockVersion.value = !result
+
+        }
+    }
 
     private fun getPlayer() {
         viewModelScope.launch {
-            collectPlayer().collect{
+            collectPlayer().collect {
                 val player = it.getValue(Player::class.java)
                 _player.value = player
             }
         }
+
     }
 
-    /* private fun loadData() {
-         val random  = (1 .. 10000).random()
-         val artist = Artist(name = "Random $random",
-             description = "Descripcion random número $random",
-             image = "https://nupec.com/wp-content/uploads/2022/02/cat-watching-2021-08-26-15-42-24-utc.jpg")
-         db.collection("artists")
-             .add(artist)
-
-     }*/
+//    private fun loadData() {
+//        val random = (1..10000).random()
+//        val artist = Artist(
+//            name = "Random $random",
+//            description = "Descripción random número $random",
+//            image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwyXeKDN29AmZgZPLS7n0Bepe8QmVappBwZCeA3XWEbWNdiDFB"
+//        )
+//        db.collection("artists").add(artist)
+//    }
 
     private fun getArtists() {
         viewModelScope.launch {
-            val result:List<Artist> = withContext(Dispatchers.IO){
+            val result: List<Artist> = withContext(Dispatchers.IO) {
                 getAllArtists()
             }
             _artist.value = result
         }
     }
 
-    private suspend fun getAllArtists():List<Artist>{
+    private suspend fun getAllArtists(): List<Artist> {
         return try {
-            db.collection("artists")
-                .get()
-                .await()
-                .documents
-                .mapNotNull { snapshot ->
-                    snapshot.toObject(Artist::class.java)
-                }
-        }catch (e:Exception){
+            db.collection("artists").get().await().documents.mapNotNull { snapshot ->
+                snapshot.toObject(Artist::class.java)
+            }
+        } catch (e: Exception) {
             Log.i("aris", e.toString())
             emptyList()
         }
-
     }
 
-    private fun collectPlayer():Flow<DataSnapshot> = callbackFlow {
-        val listener = object : ValueEventListener{
+    private fun collectPlayer(): Flow<DataSnapshot> = callbackFlow {
+        val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 trySend(snapshot).isSuccess
             }
@@ -100,19 +108,18 @@ class HomeViewmodel:ViewModel() {
                 Log.i("aris log", "Error: ${error.message}")
                 close(error.toException())
             }
-
         }
 
         val ref = database.reference.child("player")
         ref.addValueEventListener(listener)
 
-        awaitClose{
+        awaitClose {
             ref.removeEventListener(listener)
         }
     }
 
     fun onPlaySelected() {
-        if(player.value != null) {
+        if (player.value != null) {
             val currentPlayer = _player.value?.copy(play = !player.value?.play!!)
             val ref = database.reference.child("player")
             ref.setValue(currentPlayer)
