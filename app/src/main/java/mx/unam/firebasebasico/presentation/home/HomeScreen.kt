@@ -174,7 +174,8 @@ fun PlayerComponent(player: Player, onPlaySelected: () -> Unit, onCancelSelected
 @Composable
 fun ArtistItem(artist: Artist, onItemSelected: (Artist) -> Unit) {
     Column(horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.clickable { onItemSelected(artist) }) {
+        modifier = Modifier.clickable { onItemSelected(artist) }
+            .padding(horizontal = 10.dp)) {
         AsyncImage(
             modifier = Modifier
                 .size(60.dp)
