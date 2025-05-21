@@ -43,6 +43,10 @@ fun LoginScreen(auth: FirebaseAuth, navigateToHome:() -> Unit, navigateToInitial
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var loginError by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
+
+    val emailRegex = remember { Regex("^\\S+@\\S+\\.\\S+\$") }
+
 
     Column(
         modifier = Modifier
@@ -72,8 +76,10 @@ fun LoginScreen(auth: FirebaseAuth, navigateToHome:() -> Unit, navigateToInitial
             colors = TextFieldDefaults.colors(
                 unfocusedContainerColor = UnselectedField,
                 focusedContainerColor = SelectedField
+            ),
+            isError = loginError,
+
             )
-        )
         Spacer(Modifier.height(48.dp))
         Text("Password", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 40.sp)
         TextField(
@@ -84,13 +90,14 @@ fun LoginScreen(auth: FirebaseAuth, navigateToHome:() -> Unit, navigateToInitial
                 focusedContainerColor = SelectedField
             ),
             visualTransformation =  PasswordVisualTransformation(),
+            isError = loginError,
         )
 
         Spacer(Modifier.height(48.dp))
 
         if (loginError){
             Text(
-                text = "Correo y/o contraseña inválidos",
+                text = errorMessage,
                 color = Color.Red,
                 fontSize = 18.sp
             )
@@ -99,15 +106,47 @@ fun LoginScreen(auth: FirebaseAuth, navigateToHome:() -> Unit, navigateToInitial
         Spacer(Modifier.height(48.dp))
 
         Button(onClick = {
+
+            when {
+                email.isBlank() && password.isBlank() -> {
+                    errorMessage = "El email y la contraseña no pueden estar vacíos"
+                    loginError = true
+                    return@Button
+                }
+
+                email.isBlank() -> {
+                    errorMessage = "El email no puede estar vacío"
+                    loginError = true
+                    return@Button
+                }
+
+                !email.matches(emailRegex) -> {
+                    errorMessage = "Ingresa un email válido"
+                    loginError = true
+                    return@Button
+                }
+
+                password.isBlank() -> {
+                    errorMessage = "La contraseña no puede estar vacía"
+                    loginError = true
+                    return@Button
+                }
+
+                else -> {
+                    loginError = false
+                }
+            }
+
             auth.signInWithEmailAndPassword(email, password).addOnCompleteListener{ task ->
                 if(task.isSuccessful){
                     loginError = false
                     navigateToHome()
-                    Log.i("aris", "LOGIN OK")
+                    Log.i("Login", "Inicio de sesión realizado correctamente")
                 }else{
-                    //Error
                     loginError = true
-                    Log.i("aris", "LOGIN KO")
+                    errorMessage = task.exception?.localizedMessage
+                        ?: "Credenciales incorrectas"
+                    Log.i("Login", "No se pudo realizar el login: ${task.exception}")
                 }
             }
         }) {

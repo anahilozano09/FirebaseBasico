@@ -40,6 +40,10 @@ fun SignUpScreen(auth: FirebaseAuth, navigateToInitial:() -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var signUpError by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
+
+    val emailRegex = remember { Regex("^\\S+@\\S+\\.\\S+\$") }
+    val passwordMinLength = 6
 
     Column(
         modifier = Modifier
@@ -69,7 +73,8 @@ fun SignUpScreen(auth: FirebaseAuth, navigateToInitial:() -> Unit) {
             colors = TextFieldDefaults.colors(
                 unfocusedContainerColor = UnselectedField,
                 focusedContainerColor = SelectedField
-            )
+            ),
+            isError = signUpError,
         )
         Spacer(Modifier.height(48.dp))
         Text("Password", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 40.sp)
@@ -80,6 +85,7 @@ fun SignUpScreen(auth: FirebaseAuth, navigateToInitial:() -> Unit) {
                 unfocusedContainerColor = UnselectedField,
                 focusedContainerColor = SelectedField),
             visualTransformation =  PasswordVisualTransformation(),
+            isError = signUpError,
         )
 
         Spacer(Modifier.height(48.dp))
@@ -87,7 +93,7 @@ fun SignUpScreen(auth: FirebaseAuth, navigateToInitial:() -> Unit) {
 
         if (signUpError){
             Text(
-                text = "Debe colocar un correo y contraseña válidos",
+                text = errorMessage,
                 color = Color.Red,
                 fontSize = 18.sp
             )
@@ -95,20 +101,55 @@ fun SignUpScreen(auth: FirebaseAuth, navigateToInitial:() -> Unit) {
 
         Spacer(Modifier.height(48.dp))
         Button(onClick = {
-            auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
-                if(task.isSuccessful){
-                    //Registrado
-                    signUpError = false
 
-                    Log.i("aris", "Registro OK")
-                }else{
-                    //Error
+            when {
+                email.isBlank() && password.isBlank() -> {
+                    errorMessage = "El email y la contraseña no pueden estar vacíos"
                     signUpError = true
+                    return@Button
+                }
 
-                    Log.i("aris", "Registro KO")
+                email.isBlank() -> {
+                    errorMessage = "El email no puede estar vacío"
+                    signUpError = true
+                    return@Button
+                }
+
+                !email.matches(emailRegex) -> {
+                    errorMessage = "Ingresa un email válido"
+                    signUpError = true
+                    return@Button
+                }
+
+                password.isBlank() -> {
+                    errorMessage = "La contraseña no puede estar vacía"
+                    signUpError = true
+                    return@Button
+                }
+
+                password.length < passwordMinLength -> {
+                    errorMessage = "La contraseña debe tener al menos $passwordMinLength caracteres"
+                    signUpError = true
+                    return@Button
+                }
+
+                else -> {
+                    signUpError = false
                 }
             }
-        }) {
+
+            auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.i("Sign up", "Registro exitoso")
+                    navigateToInitial()
+                } else {
+                    signUpError = true
+                    errorMessage = task.exception?.localizedMessage ?: "Error desconocido"
+                    Log.i("Sign up", "Error en registro: ${task.exception}")
+                }
+            }
+        })
+        {
             Text(text = "Sign Up")
         }
     }

@@ -84,11 +84,11 @@ fun InitialScreen(navigateToLogin: () -> Unit = {}, navigateToSignUp: () -> Unit
         }
         Spacer(modifier = Modifier.height(8.dp))
         CustomButton(
-            Modifier.clickable { }, painterResource(id = R.drawable.google), "Continue with Google"
+            Modifier.clickable { throw RuntimeException("Prueba Crashlytics") }, painterResource(id = R.drawable.google), "Continue with Google"
         )
         Spacer(modifier = Modifier.height(8.dp))
         CustomButton(
-            Modifier.clickable { },
+            Modifier.clickable { throw RuntimeException("Prueba Crashlytics") },
             painterResource(id = R.drawable.facebook),
             "Continue with Facebook"
         )
